@@ -1,4 +1,4 @@
--- Set <space> as the leader key:
+-- Set <space> as the leader key:init
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
@@ -85,17 +85,25 @@ vim.opt.shiftwidth = 2 -- indentation width for >> << commands
 vim.opt.softtabstop = 2 -- backspace/delete behaves correctly
 
 -- NOTE: End of my config
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
-
 -- NOTE: My key maps
 
 -- Save current file
+vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
 vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
 
 -- Move text blocks
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
+
+-- exit insert mode
+vim.keymap.set('i', 'jk', '<Esc>')
+
+-- trigger theme switcher window
+vim.keymap.set('n', '<leader>tt', ':Themery<CR>')
+-- NOTE: end of my keymap
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -830,7 +838,7 @@ require('lazy').setup({
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      -- vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
   -- { -- You can easily change to a different colorscheme.
