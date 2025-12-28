@@ -3,7 +3,7 @@
 return {
   'nvim-neo-tree/neo-tree.nvim',
   opts = {
-    close_if_last_window = false, -- prevents auto-close
+    close_if_last_window = true, -- prevents auto-close
     filesystem = {
       follow_current_file = {
         enabled = true,
