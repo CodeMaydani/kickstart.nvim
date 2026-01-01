@@ -619,8 +619,12 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
-        --
-
+        ty = {},
+        ruff = {
+          init_options = {
+            settings = {},
+          },
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -653,6 +657,8 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'ty',
+        'ruff',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -666,7 +672,8 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for ts_ls)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            vim.lsp.config(server_name, server)
+            vim.lsp.enable(server_name)
           end,
         },
       }
@@ -705,6 +712,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        python = { 'ruff_organize_imports', 'ruff_format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -968,6 +976,7 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = {
+        'python',
         'bash',
         'c',
         'diff',
@@ -1089,6 +1098,7 @@ require('lazy').setup({
       }
     end,
   },
+  -- TODO:duplicate remove
   {
     'windwp/nvim-autopairs',
     event = 'InsertEnter',
