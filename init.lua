@@ -98,9 +98,6 @@ vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
--- exit insert mode
-vim.keymap.set('i', 'jk', '<Esc>')
-
 -- trigger theme switcher window
 vim.keymap.set('n', '<leader>tt', ':Themery<CR>')
 -- NOTE: end of my keymap
@@ -466,6 +463,14 @@ require('lazy').setup({
           --
           -- In this case, we create a function that lets us more easily define mappings specific
           -- for LSP related items. It sets the mode, buffer and description for us each time.
+
+          -- Fix LSP semantic highlighting overriding treesitter injections (TypeScript/Angular only)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and (client.name == 'ts_ls' or client.name == 'angularls') then
+            vim.api.nvim_set_hl(0, '@lsp.type.string.typescript', {})
+            vim.api.nvim_set_hl(0, '@lsp.type.string.typescriptreact', {})
+          end
+
           local map = function(keys, func, desc, mode)
             mode = mode or 'n'
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
@@ -619,7 +624,16 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         -- ts_ls = {},
-        ty = {},
+        ty = {
+          root_markers = {
+            'pyproject.toml',
+            'setup.py',
+            'setup.cfg',
+            'requirements.txt',
+            '.git',
+          },
+        },
+        angularls = {},
         ruff = {
           init_options = {
             settings = {},
@@ -976,6 +990,7 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = {
+        'angular',
         'python',
         'bash',
         'c',
@@ -1115,7 +1130,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
