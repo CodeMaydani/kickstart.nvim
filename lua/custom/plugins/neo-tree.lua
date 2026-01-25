@@ -8,6 +8,7 @@ return {
       follow_current_file = {
         enabled = true,
       },
+      use_libuv_file_watcher = true, -- This will use the OS level file watchers to detect changes
     },
     default_component_configs = {
       git_status = {
