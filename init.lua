@@ -100,6 +100,9 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- trigger theme switcher window
 vim.keymap.set('n', '<leader>tt', ':Themery<CR>')
+
+-- toggle floating terminal
+vim.keymap.set('n', 'tt', ':FloatermToggle<CR>')
 -- NOTE: end of my keymap
 
 -- Clear highlights on search when pressing <Esc> in normal mode
