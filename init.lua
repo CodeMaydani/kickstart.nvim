@@ -734,6 +734,10 @@ require('lazy').setup({
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
         css = { 'prettierd', 'prettier', stop_after_first = true },
         scss = { 'prettierd', 'prettier', stop_after_first = true },
+
+        --angular
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        htmlangular = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
