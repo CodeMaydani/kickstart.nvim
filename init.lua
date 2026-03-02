@@ -100,10 +100,10 @@ vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 
 -- trigger theme switcher window
 vim.keymap.set('n', '<leader>tt', ':Themery<CR>')
+vim.keymap.set('n', '<leader>tb', ':TransparentToggle<CR>')
 
 -- toggle floating terminal
 vim.keymap.set('n', 'tt', ':FloatermToggle<CR>')
--- NOTE: end of my keymap
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -468,11 +468,11 @@ require('lazy').setup({
           -- for LSP related items. It sets the mode, buffer and description for us each time.
 
           -- Fix LSP semantic highlighting overriding treesitter injections (TypeScript/Angular only)
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and (client.name == 'ts_ls' or client.name == 'angularls') then
-            vim.api.nvim_set_hl(0, '@lsp.type.string.typescript', {})
-            vim.api.nvim_set_hl(0, '@lsp.type.string.typescriptreact', {})
-          end
+          -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+          -- if client and (client.name == 'ts_ls' or client.name == 'angularls') then
+          --   vim.api.nvim_set_hl(0, '@lsp.type.string.typescript', {})
+          --   vim.api.nvim_set_hl(0, '@lsp.type.string.typescriptreact', {})
+          -- end
 
           local map = function(keys, func, desc, mode)
             mode = mode or 'n'
@@ -617,6 +617,15 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         -- clangd = {},
+        clangd = {
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--clang-tidy',
+            '--completion-style=detailed',
+            '--header-insertion=never',
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
@@ -626,7 +635,15 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        ts_ls = {},
+        ts_ls = {
+          filetypes = {
+            'typescript',
+            'typescriptreact',
+            'javascript',
+            'javascriptreact',
+          },
+        },
+        emmet_language_server = {},
         ty = {
           root_markers = {
             'pyproject.toml',
@@ -636,7 +653,7 @@ require('lazy').setup({
             '.git',
           },
         },
-        angularls = {},
+        -- angularls = {},
         ruff = {
           init_options = {
             settings = {},
@@ -673,7 +690,13 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        -- c support
+        'clangd',
+        'clang-format',
+        'codelldb',
+
         'stylua', -- Used to format Lua code
+        -- python support
         'ty',
         'ruff',
       })
@@ -728,7 +751,11 @@ require('lazy').setup({
         end
       end,
       formatters_by_ft = {
+        c = { 'clang_format' },
+        cpp = { 'clang_format' },
+
         lua = { 'stylua' },
+
         python = { 'ruff_organize_imports', 'ruff_format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
@@ -870,59 +897,8 @@ require('lazy').setup({
           comments = { italic = false }, -- Disable italics in comments
         },
       }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      -- vim.cmd.colorscheme 'tokyonight-night'
     end,
   },
-  -- { -- You can easily change to a different colorscheme.
-  --   -- Change the name of the colorscheme plugin below, and then
-  --   -- change the command in the config to whatever the name of that colorscheme is.
-  --   --
-  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --   'rebelot/kanagawa.nvim',
-  --   priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   config = function()
-  --     ---@diagnostic disable-next-line: missing-fields
-  --     require('kanagawa').setup {
-  --       styles = {
-  --         comments = { italic = false }, -- Disable italics in comments
-  --       },
-  --       theme = 'dragon', -- Load "wave" theme
-  --       background = { -- map the value of 'background' option to a theme
-  --         dark = 'dragon', -- try "dragon" !
-  --         light = 'lotus',
-  --       },
-  --     }
-  --     -- Load the colorscheme here.
-  --     -- Like many other themes, this one has different styles, and you could load
-  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  --     vim.cmd.colorscheme 'kanagawa'
-  --   end,
-  -- },
-  -- { -- You can easily change to a different colorscheme.
-  --   -- Change the name of the colorscheme plugin below, and then
-  --   -- change the command in the config to whatever the name of that colorscheme is.
-  --   --
-  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --   'shaunsingh/nord.nvim',
-  --   priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   config = function()
-  --     -- Example config in lua
-  --     vim.g.nord_contrast = true
-  --     vim.g.nord_borders = false
-  --     vim.g.nord_disable_background = false
-  --     vim.g.nord_italic = false
-  --     vim.g.nord_uniform_diff_background = true
-  --     vim.g.nord_bold = false
-  --
-  --     -- Load the colorscheme
-  --     require('nord').set()
-  --   end,
-  -- },
-  -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
   { -- Collection of various small independent plugins/modules
@@ -1004,6 +980,7 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = {
+
         'angular',
         'python',
         'bash',
@@ -1182,6 +1159,7 @@ require('lazy').setup({
     },
   },
 })
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 --
 -- vim: ts=2 sts=2 sw=2 et
