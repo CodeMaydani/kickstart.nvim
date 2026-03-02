@@ -626,7 +626,18 @@ require('lazy').setup({
             '--header-insertion=never',
           },
         },
-        -- gopls = {},
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              analyses = {
+                unusedparams = true,
+                shadow = true,
+              },
+              staticcheck = true,
+            },
+          },
+        },
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -690,6 +701,10 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        -- go support
+        'gopls',
+        'goimports',
+
         -- c support
         'clangd',
         'clang-format',
@@ -753,6 +768,8 @@ require('lazy').setup({
       formatters_by_ft = {
         c = { 'clang_format' },
         cpp = { 'clang_format' },
+
+        go = { 'goimports' },
 
         lua = { 'stylua' },
 
@@ -980,7 +997,7 @@ require('lazy').setup({
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
       ensure_installed = {
-
+        'go',
         'angular',
         'python',
         'bash',
